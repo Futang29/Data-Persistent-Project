@@ -11,11 +11,12 @@ public class MainManager : MonoBehaviour
     public Rigidbody Ball;
 
     public Text ScoreText;
+    public Text BestScoreText;
     public GameObject GameOverText;
     
     private bool m_Started = false;
     private int m_Points;
-    
+
     private bool m_GameOver = false;
 
     
@@ -42,6 +43,11 @@ public class MainManager : MonoBehaviour
     {
         if (!m_Started)
         {
+
+            DisplayBestScore();
+            NameSaver.Instance.LoadScore();
+
+
             if (Input.GetKeyDown(KeyCode.Space))
             {
                 m_Started = true;
@@ -68,9 +74,35 @@ public class MainManager : MonoBehaviour
         ScoreText.text = $"Score : {m_Points}";
     }
 
+    void DisplayBestScore()
+    {
+
+        BestScoreText.text = $"Best Score : {NameSaver.Instance.bestScore} name : {NameSaver.Instance.HSHolder}";
+
+    }
+
+    public void NewHighSCore()
+    {
+
+        if (m_Points > NameSaver.Instance.bestScore)
+        {
+
+            NameSaver.Instance.bestScore = m_Points;
+
+            NameSaver.Instance.HSHolder = NameSaver.Instance.PlayerName;
+
+            Debug.Log(NameSaver.Instance.HSHolder);
+            NameSaver.Instance.SaveScore();
+            DisplayBestScore();
+        
+        }
+
+    }
+
     public void GameOver()
     {
         m_GameOver = true;
         GameOverText.SetActive(true);
+        NewHighSCore();
     }
 }
